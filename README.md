@@ -3,7 +3,8 @@
 ## Install
 
 ```
-pkg> add https://github.com/genkuroki/Ising2D.jl.git
+julia> ]
+pkg> add https://github.com/genkuroki/Ising2D.jl
 ```
 
 ## Example
