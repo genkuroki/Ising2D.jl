@@ -9,6 +9,8 @@ pkg> add https://github.com/genkuroki/Ising2D.jl
 
 ## Example
 
+[Ising2D.ipynb](https://nbviewer.jupyter.org/github/genkuroki/Ising2D.jl/blob/master/Ising2D.ipynb)
+
 ```julia
 using Ising2D
 ```
