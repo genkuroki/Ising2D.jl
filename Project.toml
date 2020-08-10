@@ -3,6 +3,10 @@ uuid = "1f4b2aca-d2d9-44b6-965c-5a88febb3dc6"
 authors = ["genkuroki <genkuroki@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
 [compat]
 julia = "1"
 
