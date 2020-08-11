@@ -51,3 +51,9 @@ s = rand_ising2d(200)
 gif_ising2d(s, 1.0; nwarmups=0, nskips=1, nframes=500, fps=15)
 ```
 <img src="ising2d.gif" />
+
+```julia
+gif_mcmc_ising2d()
+```
+
+<img src="ising2d_mcmc.gif" />
