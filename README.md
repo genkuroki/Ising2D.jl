@@ -8,6 +8,11 @@
 
 ```
 julia> ]
+pkg> add Ising2D#master
+```
+
+```
+julia> ]
 pkg> add https://github.com/genkuroki/Ising2D.jl
 ```
 
