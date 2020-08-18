@@ -25,6 +25,7 @@ using Plots
 using Plots.PlotMeasures
 using Random
 using Random: default_rng
+using ProgressMeter
 
 export
     default_rng, 
@@ -203,7 +204,7 @@ end
 
 """
     gif_ising2d(; s=rand_ising2d(), k=1.0, β=k*β_ising2d, rng=default_rng(),
-        algorithm=default_algorithm(), 
+        algorithm=default_algorithm(), progress=true,
         nwarmups=0, nskips=10, niters=100, 
         gifname="ising2d.gif", fps=10,
         size=(201.5, 217.5), color=:gist_earth, clim=(-2, 1.1), kwargs...
@@ -218,33 +219,41 @@ gif_ising2d(s=rand_ising2d(200))
 ```
 """
 function gif_ising2d(; s=rand_ising2d(), k=1.0, β=k*β_ising2d, rng=default_rng(),
-        algorithm=default_algorithm(), 
+        algorithm=default_algorithm(), progress=true,
         nwarmups=0, nskips=10, niters=100, 
         gifname="ising2d.gif", fps=10,
         size=(201.5, 217.5), color=:gist_earth, clim=(-2, 1.1), kwargs...
     )
     ising2d!(algorithm, s, β, nwarmups, rng)
+    progress && (prog = Progress(niters, 0))
     anim = @animate for t in 0:niters
         iszero(t) || ising2d!(algorithm, s, β, nskips, rng)
         title="β=$(round(β/β_ising2d, digits=4))β_c,  t=$t"
-        P = plot_ising2d(s; size=size, color=color, clim=clim, title=title, kwargs...)
+        plot_ising2d(s; size=size, color=color, clim=clim, title=title, kwargs...)
+        progress && next!(prog)
     end
     gif(anim, gifname; fps=fps)
 end
 
 """
     mcmc_ising2d!(; s=rand_ising2d(), k=1.0, β=k*β_ising2d, rng=default_rng(),
-        algorithm=default_algorithm(), nwarmups=1000, nskips=100, niters=5000)
+        algorithm=default_algorithm(), progress=true, 
+        nwarmups=1000, nskips=100, niters=5000
+    )
 
 returns the result of the Markov Chain Monte Carlo simulation with length niters, which is the array of the states of 2D Ising model.
 """
 function mcmc_ising2d!(; s=rand_ising2d(), k=1.0, β=k*β_ising2d, rng=default_rng(),
-        algorithm=default_algorithm(), nwarmups=1000, nskips=100, niters=5000)
+        algorithm=default_algorithm(), progress=true, 
+        nwarmups=1000, nskips=100, niters=5000
+    )
     S = Array{typeof(s), 1}(undef, niters)
     ising2d!(algorithm, s, β, nwarmups, rng)
+    progress && (prog = Progress(niters, 1, "mcmc_ising2d!: "))
     for i in 1:niters
         ising2d!(algorithm, s, β, nskips, rng)
         S[i] = copy(s)
+        progress && next!(prog)
     end
     S
 end
@@ -294,7 +303,7 @@ end
 plots the MCMC result S with energy per site and magnetization.
 """
 function plot_mcmc_ising2d(S, E=nothing, M=nothing;
-        k=1.0, β=k*β_ising2d, niters=length(S), t=niters,   
+        k=1.0, β=k*β_ising2d, niters=length(S), t=niters, 
         ylim_E=(-1.55, -1.3), ylim_M=(-0.8, 0.8), lw=0.5, alpha=0.8,
         size=(600, 300), color=:gist_earth, clim=(-2, 1.1), kwargs...
     )
@@ -343,7 +352,7 @@ end
 """
     gif_mcmc_ising2d(S=nothing, E=nothing, M=nothing;
         s=rand_ising2d(), k=1.0, β=k*β_ising2d, rng=default_rng(),
-        algorithm=default_algorithm(),
+        algorithm=default_algorithm(), progress=true,
         nwarmups=1000, nskips=1000, niters=500,
         ylim_E=(-1.55, -1.30), ylim_M=(-0.8, 0.8), lw=1.0, alpha=0.8,
         gifname="ising2d_mcmc.gif", fps=10,
@@ -359,7 +368,7 @@ gif_mcmc_ising2d()
 """
 function gif_mcmc_ising2d(S=nothing, E=nothing, M=nothing;
         s=rand_ising2d(), k=1.0, β=k*β_ising2d, rng=default_rng(),
-        algorithm=default_algorithm(),
+        algorithm=default_algorithm(), progress=true,
         nwarmups=1000, nskips=1000, niters=500,
         ylim_E=(-1.55, -1.30), ylim_M=(-0.8, 0.8), lw=1.0, alpha=0.8,
         gifname="ising2d_mcmc.gif", fps=10,
@@ -367,7 +376,7 @@ function gif_mcmc_ising2d(S=nothing, E=nothing, M=nothing;
     )
     if isnothing(S)
         S = mcmc_ising2d!(; s=s, k=k, β=β, rng=rng, algorithm=algorithm, 
-            nwarmups=nwarmups, nskips=nskips, niters=niters)
+            progress=progress, nwarmups=nwarmups, nskips=nskips, niters=niters)
     else
         niters = length(S)
     end
@@ -377,11 +386,13 @@ function gif_mcmc_ising2d(S=nothing, E=nothing, M=nothing;
     if isnothing(M)
         M = magnetization_ising2d.(S)
     end
+    progress && (prog = Progress(niters, 1, "@animate for:  "))
     anim = @animate for t in 1:niters
         plot_mcmc_ising2d(S, E, M; k=k, β=β, t=t,   
             ylim_E=ylim_E, ylim_M=ylim_M, lw=lw, alpha=alpha,
             size=size, color=color, clim=clim, kwargs...
         )
+        progress && next!(prog)
     end
     gif(anim, gifname; fps=fps)
 end
