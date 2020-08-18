@@ -8,6 +8,13 @@
 
 ```
 julia> ]
+pkg> add Ising2D
+```
+
+or
+
+```
+julia> ]
 pkg> add Ising2D#master
 ```
 
