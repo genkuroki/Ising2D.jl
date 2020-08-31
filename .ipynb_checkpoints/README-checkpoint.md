@@ -8,6 +8,18 @@
 
 ```
 julia> ]
+pkg> add Ising2D
+```
+
+or
+
+```
+julia> ]
+pkg> add Ising2D#master
+```
+
+```
+julia> ]
 pkg> add https://github.com/genkuroki/Ising2D.jl
 ```
 
@@ -26,7 +38,7 @@ s = rand_ising2d(200)
 P0 = plot_ising2d(s)
 ```
 
-<img src="s0.png" />
+<img src="images/s0.png" />
 
 Update the whole state 500 times:
 
@@ -35,7 +47,7 @@ ising2d!(s, β_ising2d, 500)
 P1 = plot_ising2d(s)
 ```
 
-<img src="s1.png" />
+<img src="images/s1.png" />
 
 Create PNG files:
 
@@ -50,4 +62,10 @@ Create the GIF animation of 2D Ising model:
 s = rand_ising2d(200)
 gif_ising2d(s, 1.0; nwarmups=0, nskips=1, nframes=500, fps=15)
 ```
-<img src="ising2d.gif" />
+<img src="images/ising2d.gif" />
+
+```julia
+gif_mcmc_ising2d()
+```
+
+<img src="images/ising2d_mcmc.gif" />
