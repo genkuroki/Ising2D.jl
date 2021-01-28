@@ -115,7 +115,7 @@ plot_ising2d(s)
 """
 function ising2d!(::IfElse, s=rand_ising2d(), β=β_ising2d, niters=10^3, rng=default_rng())
     m, n = size(s)
-    prob = [exp(-2*β*k) for k in -4:4]
+    prob = ((exp(-2*β*k) for k in -4:4)...,)
     @inbounds for iter in 1:niters, j in 1:n, i in 1:m
         NN = s[ifelse(i == 1, m, i-1), j]
         SS = s[ifelse(i == m, 1, i+1), j]
@@ -144,7 +144,7 @@ plot_ising2d(s)
 """
 function ising2d!(::MultiFor, s=rand_ising2d(), β=β_ising2d, niters=10^3, rng=default_rng())
     m, n = size(s)
-    prob = [exp(-2*β*r) for r in -4:4]
+    prob = ((exp(-2*β*k) for k in -4:4)...,)
     @inbounds for iter in 1:niters
         let s₁ = s[1,1], k = s₁ * (s[2,1] + s[m,1] + s[1,2] + s[1,n])
             s[1,1] = ifelse(rand(rng) < prob[k+5], -s₁, s₁)
