@@ -60,7 +60,7 @@ Create the GIF animation of 2D Ising model:
 
 ```julia
 s = rand_ising2d(200)
-gif_ising2d(s, 1.0; nwarmups=0, nskips=1, nframes=500, fps=15)
+gif_ising2d(;s, k=1.0, nwarmups=0, nskips=1, nframes=500, fps=15)
 ```
 <img src="images/ising2d.gif" />
 
